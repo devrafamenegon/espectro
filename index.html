@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f3f1ea" />
+  <title>Onde você cai? — Teste de espectro político</title>
+  <meta name="description" content="Um teste visual e interativo para explorar seu posicionamento político em sete dimensões." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="view-intro">
+  <div class="grain" aria-hidden="true"></div>
+  <header class="topbar">
+    <a href="#" class="brand brand-logo-link" id="brand" aria-label="Segundo Turno"><img src="logo-segundo-turno.svg" alt="Segundo Turno" class="brand-logo"></a>
+    <div class="top-meta">
+      <span class="mono top-context hide-mobile">7 eixos · escolha 30 ou 56 perguntas</span>
+      <div class="header-actions">
+        <button class="secondary-btn header-redo" id="header-redo" type="button">refazer <span>↻</span></button>
+        <button class="primary-btn header-save" id="header-save" type="button">salvar <span class="download-icon" aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M10 3v9m0 0 3.5-3.5M10 12 6.5 8.5M4 14.5v2h12v-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main id="app" aria-live="polite"></main>
+
+  <template id="intro-template">
+    <section class="screen intro-screen">
+      <div class="orbit orbit-a">economia</div>
+      <div class="orbit orbit-b">costumes</div>
+      <div class="orbit orbit-c">liberdades</div>
+      <div class="orbit orbit-d">igualdade</div>
+      <div class="orbit orbit-e">segurança</div>
+      <div class="orbit orbit-f">desenvolvimento</div>
+      <div class="orbit orbit-g">instituições</div>
+
+      <div class="intro-copy">
+        <p class="eyebrow">UM TESTE PARA ENTENDER SEU VOTO</p>
+        <h1 class="intro-election-title"><span class="intro-title-first">Você é <em class="intro-candidate-name is-lula" data-candidate="lula">Lula</em> ou <em class="intro-candidate-name is-flavio" data-candidate="flavio">Flávio</em>?</span><span class="intro-title-second">antes de escolher um lado, descubra o seu.</span></h1>
+        <p class="intro-lead">Responda perguntas rápidas e descubra como suas opiniões se aproximam das propostas e posições de cada candidato.</p>
+        <div class="intro-actions">
+          <button class="primary-btn" id="start-btn">começar teste <span>↗</span></button>
+          <span class="mono">≈ 5 min</span>
+        </div>
+      </div>
+
+      <div class="intro-footer">
+        <p>Não existe resposta certa. Tente responder pelo que você realmente acredita — não pelo que “seu lado” deveria pensar.</p>
+        <p class="mono">educacional · não científico</p>
+      </div>
+    </section>
+  </template>
+
+  <template id="test-mode-template">
+    <section class="screen mode-screen">
+      <div class="mode-copy">
+        <p class="eyebrow">ANTES DE COMEÇAR</p>
+        <h1>Quanto você quer <em>aprofundar</em>?</h1>
+        <p>Os dois testes analisam os mesmos 7 eixos. O curto prioriza os temas mais centrais; o detalhado usa 8 perguntas por eixo para reduzir o peso de uma resposta isolada.</p>
+      </div>
+      <div class="mode-grid">
+        <button class="mode-card is-short" type="button" data-test-mode="short">
+          <span class="mono">TESTE CURTO</span>
+          <strong>30 perguntas</strong>
+          <p>30 perguntas distribuídas entre os 7 eixos. Mais rápido e suficiente para uma leitura geral.</p>
+          <div><span>≈ 5 min</span><i>↗</i></div>
+        </button>
+        <button class="mode-card is-detailed" type="button" data-test-mode="detailed">
+          <span class="mono">TESTE DETALHADO</span>
+          <strong>56 perguntas</strong>
+          <p>8 perguntas por eixo. Mais precisão na leitura e menos impacto de uma resposta isolada.</p>
+          <div><span>≈ 11–13 min</span><i>↗</i></div>
+        </button>
+      </div>
+      <button class="back-btn mode-back" type="button" data-mode-back><span>←</span> voltar</button>
+    </section>
+  </template>
+
+  <template id="question-template">
+    <section class="screen question-screen">
+      <div class="question-stage" data-question-stage>
+      <div class="question-layout">
+        <aside class="question-index" data-question-index>01</aside>
+        <div class="question-main">
+          <div class="question-topline">
+            <p class="eyebrow" data-question-kicker>SOBRE ECONOMIA</p>
+            <button class="back-btn" data-back type="button"><span>←</span> pergunta anterior</button>
+          </div>
+          <div class="question-title-row">
+            <h2 data-question-text></h2>
+            <button class="question-info-btn" data-question-info type="button" aria-label="Explicar esta pergunta">?</button>
+            <div class="question-help-nudge mono" data-question-nudge aria-hidden="true">ficou em dúvida? <strong>clique no ?</strong></div>
+          </div>
+          <div class="answers" data-answers></div>
+          <div class="question-help mono">teclas 1–5 também funcionam</div>
+        </div>
+      </div>
+      </div>
+
+      <div class="progress-wrap" aria-label="Progresso do teste">
+        <div class="progress-meta">
+          <span class="mono" data-question-count>01 / 30</span>
+        </div>
+        <div class="progress-stages" data-progress-stages></div>
+        <div class="progress-track">
+          <div class="progress-fill" data-progress-fill></div>
+          <span data-progress-dividers></span>
+        </div>
+      </div>
+
+      <div class="shape shape-question" data-shape-question aria-hidden="true"></div>
+    </section>
+  </template>
+
+  <template id="result-template">
+    <section class="result-screen">
+      <div class="result-hero result-hero-v18">
+        <div class="result-hero-main">
+          <div class="result-hero-topline">
+            <p class="eyebrow">SEU RESULTADO</p>
+            <span class="result-spectrum-badge mono" id="result-spectrum"></span>
+          </div>
+          <h1 id="result-title"></h1>
+          <p class="result-tagline" id="result-summary"></p>
+          <article class="result-about-card" id="result-about-card" role="link" tabindex="0">
+            <span class="mono">SOBRE ESSE ESPECTRO</span>
+            <p id="result-spectrum-copy"></p>
+            <div class="spectrum-chips" id="spectrum-chips"></div>
+            <span class="result-about-link mono">saiba mais sobre essa corrente ↗</span>
+          </article>
+        </div>
+        <aside class="result-match-card">
+          <span class="mono">COMPATIBILIDADE COM A CORRENTE</span>
+          <div class="result-match-ring">
+            <strong id="result-match-percent">—%</strong>
+            <span class="mono">match</span>
+          </div>
+          <p>Quanto mais perto de 100%, mais seus 7 eixos se aproximam do perfil dessa corrente.</p>
+        </aside>
+      </div>
+
+      <section class="panel spectrum-line-panel">
+        <div class="panel-head">
+          <span class="mono">ESQUERDA ↔ DIREITA</span>
+          <span class="mono" id="spectrum-index-label">posição 50 / 100</span>
+        </div>
+        <div class="spectrum-line" id="spectrum-line">
+          <div class="spectrum-zone-labels mono">
+            <span>extrema-esq.</span><span>esquerda</span><span>centro-esq.</span><span>centro</span><span>centro-dir.</span><span>direita</span><span>extrema-dir.</span>
+          </div>
+          <div class="spectrum-rail">
+            <span class="spectrum-tick" style="left:18%"></span>
+            <span class="spectrum-tick" style="left:35%"></span>
+            <span class="spectrum-tick" style="left:47%"></span>
+            <span class="spectrum-tick" style="left:53%"></span>
+            <span class="spectrum-tick" style="left:65%"></span>
+            <span class="spectrum-tick" style="left:82%"></span>
+            <div class="spectrum-pointer" id="spectrum-pointer"><span id="spectrum-pointer-label">você</span></div>
+          </div>
+          <div class="spectrum-end-labels mono"><span>mais à esquerda</span><span>mais à direita</span></div>
+        </div>
+      </section>
+
+      <div class="result-grid">
+        <section class="panel compass-panel">
+          <div class="panel-head">
+            <span class="mono">MAPA PRINCIPAL</span>
+            <span class="mono">economia × costumes</span>
+          </div>
+          <div class="compass" id="compass">
+            <div class="axis-line axis-x"></div>
+            <div class="axis-line axis-y"></div>
+            <span class="axis-label left">+ estado</span>
+            <span class="axis-label right">+ mercado</span>
+            <span class="axis-label top">+ progressista</span>
+            <span class="axis-label bottom">+ conservador</span>
+            <div class="compass-dot" id="compass-dot"><span>você</span></div>
+            <div class="compass-explorer" id="compass-explorer" aria-hidden="true">
+              <span class="mono" id="compass-explorer-label">EXPLORE O MAPA</span>
+              <strong id="compass-explorer-title">Centro</strong>
+              <small id="compass-explorer-values">Economia 50 · Costumes 50</small>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel scores-panel">
+          <div class="panel-head">
+            <span class="mono">SEUS 7 EIXOS</span>
+          </div>
+          <div id="score-bars"></div>
+        </section>
+      </div>
+
+      <section class="panel reading-panel">
+        <div class="panel-head">
+          <span class="mono">LEITURA</span>
+          <span class="mono">o que isso sugere</span>
+        </div>
+        <div class="reading-grid" id="reading-grid"></div>
+      </section>
+
+      <section class="nearby">
+        <p class="eyebrow">CORRENTES PRÓXIMAS</p>
+        <div class="nearby-list" id="nearby-list"></div>
+      </section>
+
+      <section class="candidate-section">
+        <div class="candidate-heading">
+          <div>
+            <p class="eyebrow">ELEIÇÕES 2026 · 2º TURNO</p>
+            <h2><span class="candidate-title-line">Compare os mesmos eixos</span><br><span class="candidate-title-line">com <em class="candidate-heading-name is-lula" data-candidate="lula">Lula</em> e <em class="candidate-heading-name is-flavio" data-candidate="flavio">Flávio Bolsonaro</em>.</span></h2>
+          </div>
+          <p>As posições abaixo são uma síntese aproximada dos planos de governo e de posições públicas em 2026. Elas servem para comparação informativa — não são uma recomendação de voto nem um índice de compatibilidade.</p>
+        </div>
+
+        <div class="candidate-legend mono">
+          <span><i class="legend-dot you"></i> você</span>
+          <span><i class="legend-dot lula"></i> Lula</span>
+          <span><i class="legend-dot flavio"></i> Flávio</span>
+        </div>
+
+        <section class="panel candidate-overview-panel">
+          <div class="panel-head">
+            <span class="mono">PANORAMA GERAL</span>
+            <span class="mono">esquerda ↔ direita</span>
+          </div>
+          <div class="candidate-overview-grid">
+            <div class="candidate-spectrum-line" id="candidate-spectrum-line"></div>
+          </div>
+        </section>
+
+        <section class="panel candidate-axes-panel">
+          <div class="panel-head">
+            <span class="mono">COMPARAÇÃO NOS 7 EIXOS</span>
+            <span class="mono">mesma escala do seu resultado</span>
+          </div>
+          <div class="candidate-axis-list" id="candidate-axis-list"></div>
+        </section>
+
+        <article class="candidate-proximity-card" id="candidate-proximity-card">
+          <div class="candidate-proximity-kicker">
+            <span class="mono">PROXIMIDADE TEMÁTICA</span>
+            <span class="mono">7 eixos analisados</span>
+          </div>
+          <div class="candidate-proximity-main">
+            <div>
+              <span class="candidate-proximity-label mono">SUAS IDEIAS FICAM MAIS PRÓXIMAS DE</span>
+              <div class="candidate-proximity-hero" id="candidate-proximity-hero">
+                <div class="candidate-proximity-avatars" id="candidate-proximity-avatars"></div>
+                <h3 id="candidate-proximity-name">—</h3>
+              </div>
+              <div class="candidate-proximity-percent" id="candidate-proximity-percent"><strong>—%</strong><span class="mono">proximidade nos 7 eixos</span></div>
+              <p class="candidate-proximity-reason" id="candidate-proximity-reason"></p>
+              <p id="candidate-proximity-copy"></p>
+            </div>
+            <div class="candidate-proximity-visual" id="candidate-proximity-visual"></div>
+          </div>
+          <section class="politician-match-section">
+            <div class="politician-match-head">
+              <span class="mono">OUTRAS APROXIMAÇÕES TEMÁTICAS</span>
+              <span class="mono">estimativa nos mesmos 7 eixos</span>
+            </div>
+            <div class="politician-match-grid" id="politician-match-grid"></div>
+          </section>
+          <p class="candidate-proximity-note mono">proximidade nos eixos deste teste ≠ apoio, identificação partidária ou recomendação de voto</p>
+        </article>
+
+
+
+
+        <div class="candidate-sources mono">
+          <span>POSIÇÕES ATUALIZADAS EM 08 OUT 2026</span>
+          <div>
+            <a href="https://www.tse.jus.br/eleicoes/eleicoes-2026-content/propostas-de-governo-dos-candidatos-ao-cargo-de-presidente-da-republica-eleicoes-2026-segundo-turno" target="_blank" rel="noreferrer">TSE · planos oficiais ↗</a>
+            <a href="https://www.tse.jus.br/eleicoes/eleicoes-2026-content/propostas-de-governo-dos-candidatos-ao-cargo-de-presidente-da-republica-eleicoes-2026/planos-de-governo-dos-candidatos-ao-cargo-de-presidente-da-republica-eleicoes-2026" target="_blank" rel="noreferrer">TSE · demais presidenciáveis ↗</a>
+            <a href="https://www1.folha.uol.com.br/poder/2026/08/veja-pontos-em-que-os-planos-de-governo-de-lula-e-flavio-bolsonaro-divergem.shtml" target="_blank" rel="noreferrer">comparativo de propostas ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <footer class="result-footer">
+        <button class="secondary-btn result-action-btn" id="redo-test">refazer teste <span>↻</span></button>
+        <button class="primary-btn result-action-btn" id="save-result">salvar resultado <span class="download-icon" aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M10 3v9m0 0 3.5-3.5M10 12 6.5 8.5M4 14.5v2h12v-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+        <p class="mono">Este teste é interpretativo e não substitui análise política ou acadêmica.</p>
+      </footer>
+
+      <section class="support-section">
+        <div class="support-copy">
+          <span class="mono">APOIE O PROJETO</span>
+          <h3>Um projeto do segundoturno para ajudar mais gente a entender o próprio voto.</h3>
+          <p>Manter o teste atualizado exige pesquisa, revisão das perguntas e evolução do produto. Se ele foi útil para você, considere apoiar o projeto.</p>
+        </div>
+        <div class="support-action-wrap">
+          <button class="primary-btn support-btn" type="button" id="open-support-dialog">apoiar o projeto <span>♡</span></button>
+          <span class="mono">apoio via pix</span>
+        </div>
+      </section>
+
+      <footer class="creator-footer mono">
+        <span>criado por</span>
+        <a href="https://www.linkedin.com/in/junior-saraiva" target="_blank" rel="noreferrer">Junior Saraiva</a>
+        <span>e</span>
+        <a href="https://www.linkedin.com/in/welbertorres/" target="_blank" rel="noreferrer">Welber Torres</a>
+      </footer>
+    </section>
+  </template>
+
+  <div class="candidate-face-tooltip" id="candidate-face-tooltip" aria-hidden="true">
+    <div class="candidate-face-frame"><img id="candidate-face-img" alt=""></div>
+    <div class="candidate-face-copy">
+      <span class="mono" id="candidate-face-name"></span>
+      <small id="candidate-face-compare"></small>
+    </div>
+  </div>
+
+  <div class="ideology-hover-chip" id="ideology-hover-chip" aria-hidden="true">
+    <span class="mono">saiba mais</span>
+    <i>↗</i>
+  </div>
+
+  <div class="glossary-tooltip" id="glossary-tooltip" role="tooltip" aria-hidden="true"></div>
+
+  <dialog class="question-explain-dialog" id="question-explain-dialog">
+    <div class="question-explain-card">
+      <div class="question-explain-head">
+        <div>
+          <span class="mono">ENTENDA A PERGUNTA</span>
+          <h2 id="question-explain-title">Em outras palavras</h2>
+        </div>
+        <button class="modal-close" type="button" data-close-question-help aria-label="Fechar">×</button>
+      </div>
+      <p class="question-explain-plain" id="question-explain-plain"></p>
+      <div class="question-explain-examples">
+        <article class="is-agree">
+          <span class="mono">SE VOCÊ CONCORDA</span>
+          <p id="question-explain-agree"></p>
+        </article>
+        <article class="is-disagree">
+          <span class="mono">SE VOCÊ DISCORDA</span>
+          <p id="question-explain-disagree"></p>
+        </article>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="confirm-dialog" id="restart-dialog">
+    <form method="dialog" class="confirm-card">
+      <span class="mono" id="restart-kicker">REFAZER TESTE</span>
+      <h2 id="restart-title">Refazer o teste do zero?</h2>
+      <p id="restart-copy">Suas respostas e o resultado atual serão apagados. Essa ação não pode ser desfeita.</p>
+      <div class="confirm-actions">
+        <button class="secondary-btn" value="cancel" data-cancel-restart>cancelar</button>
+        <button class="danger-btn" value="confirm" data-confirm-restart id="restart-confirm-label">refazer teste <span>↻</span></button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="support-dialog" id="support-dialog">
+    <div class="support-dialog-card">
+      <button class="modal-close support-dialog-close" type="button" data-close-support aria-label="Fechar">×</button>
+      <div class="support-dialog-grid">
+        <div class="support-dialog-about">
+          <span class="mono">APOIE O SEGUNDOTURNO</span>
+          <h2>O segundoturno é feito por duas pessoas.</h2>
+          <p>O segundoturno nasceu para transformar temas políticos complexos em uma experiência simples, visual e educativa. O apoio ajuda a manter pesquisa, atualização de propostas, revisão das perguntas e melhorias do produto.</p>
+          <div class="support-creators">
+            <span class="mono">CRIADORES</span>
+            <p><a href="https://www.linkedin.com/in/junior-saraiva" target="_blank" rel="noreferrer">Junior Saraiva</a> · criador</p>
+            <p><a href="https://www.linkedin.com/in/welbertorres/" target="_blank" rel="noreferrer">Welber Torres</a> · criador</p>
+          </div>
+          <small class="support-placeholder-note">PIX demonstrativo nesta versão — a chave pode ser substituída depois pela definitiva.</small>
+        </div>
+        <div class="support-pix-panel">
+          <span class="mono">PIX</span>
+          <div class="support-qr-wrap"><img src="pix-placeholder.png" alt="QR Code Pix demonstrativo"></div>
+          <label class="support-pix-code" for="support-pix-input">
+            <span class="mono">CÓDIGO PIX</span>
+            <div>
+              <input id="support-pix-input" type="text" readonly value="PIX_DEMONSTRATIVO_SEGUNDOTURNO">
+              <button class="secondary-btn" id="copy-support-pix" type="button">copiar</button>
+            </div>
+          </label>
+          <p class="support-copy-feedback mono" id="support-copy-feedback" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="save-dialog" id="save-dialog">
+    <form method="dialog" class="save-card" id="save-form">
+      <div class="save-modal-head">
+        <div>
+          <span class="mono">SALVAR RESULTADO</span>
+          <h2>Monte seu card.</h2>
+          <p>Escolha o formato, a paleta e quais informações entram no PNG.</p>
+        </div>
+        <button class="modal-close" value="cancel" aria-label="Fechar">×</button>
+      </div>
+
+      <div class="save-modal-grid">
+        <div class="save-options">
+          <fieldset>
+            <legend class="mono">FORMATO</legend>
+            <div class="option-grid format-options">
+              <label class="option-card"><input type="radio" name="export-format" value="square" checked><span class="format-icon square"></span><strong>Quadrado</strong><small>1080 × 1080</small></label>
+              <label class="option-card"><input type="radio" name="export-format" value="story"><span class="format-icon story"></span><strong>Story</strong><small>1080 × 1920</small></label>
+              <label class="option-card"><input type="radio" name="export-format" value="landscape"><span class="format-icon landscape"></span><strong>Horizontal</strong><small>1600 × 900</small></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend class="mono">PALETA</legend>
+            <div class="palette-options">
+              <label class="palette-choice"><input type="radio" name="export-palette" value="cream" checked><span style="--swatch:#f3f1ea"></span><b>Original</b></label>
+              <label class="palette-choice"><input type="radio" name="export-palette" value="acid"><span style="--swatch:#d9ff45"></span><b>Ácida</b></label>
+              <label class="palette-choice"><input type="radio" name="export-palette" value="blue"><span style="--swatch:#c9d6ff"></span><b>Azul</b></label>
+              <label class="palette-choice"><input type="radio" name="export-palette" value="dark"><span style="--swatch:#161616"></span><b>Escura</b></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend class="mono">CONTEÚDO</legend>
+            <div class="content-options">
+              <label><input type="radio" name="export-content" value="spectrum" checked><span>Meu espectro</span></label>
+              <label><input type="radio" name="export-content" value="candidates"><span>Comparação eleitoral</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="save-preview-wrap">
+          <span class="mono">PRÉVIA</span>
+          <div class="save-preview-stage">
+            <canvas id="export-preview" width="1080" height="1080"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="save-modal-actions">
+        <button class="secondary-btn" value="cancel">cancelar</button>
+        <button class="primary-btn" type="button" id="download-result">baixar PNG <span>↓</span></button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

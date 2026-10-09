@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corrente política · Espectro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f3f1ea;--ink:#121212;--muted:#6c6a63;--accent:#ff5c35;--acid:#d9ff45;--pink:#ffb4d1;--lavender:#c7b7f6;--blue:#88A7FF;--lula:#F98E99;--radius:26px}
+    *{box-sizing:border-box} html,body{margin:0;padding:0} body{font-family:Manrope,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden}
+    .page{padding:32px 5vw 72px;max-width:1280px;margin:0 auto}
+    .top{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:42px}.ideology-logo{display:block;width:min(220px,42vw);height:auto}.back{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);padding:10px 14px;border-radius:999px;text-decoration:none;color:var(--ink);font:11px "DM Mono",monospace;text-transform:uppercase;background:rgba(255,255,255,.35)}
+    .badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);padding:8px 11px;border-radius:999px;font:11px "DM Mono",monospace;text-transform:uppercase;background:rgba(255,255,255,.35)}
+    .hero{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:30px;align-items:center}.eyebrow{font:11px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.08em;margin:0 0 14px;color:var(--muted)}
+    h1{margin:0;font-size:clamp(54px,8vw,120px);line-height:.92;letter-spacing:-.055em} .summary{max-width:760px;font-size:clamp(18px,2vw,26px);line-height:1.42;margin:24px 0 0}
+    .stamp{aspect-ratio:1;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;text-align:center;background:var(--acid);font:11px "DM Mono",monospace;text-transform:uppercase;line-height:1.3;padding:24px;transform:rotate(8deg)} .stamp strong{display:block;margin-top:4px;font:700 16px Manrope,sans-serif;text-transform:none}
+    .grid{display:grid;grid-template-columns:1.06fr .94fr;gap:18px;margin-top:28px}
+    .panel{border:1px solid var(--ink);border-radius:var(--radius);padding:22px;background:rgba(255,255,255,.18)} .panel-head{display:flex;justify-content:space-between;gap:20px;margin-bottom:18px} .mono{font:10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.08em}
+    .lead{font-size:16px;line-height:1.6;color:var(--muted);margin:0}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.chip{border:1px solid var(--ink);border-radius:999px;padding:7px 10px;font:10px "DM Mono",monospace;text-transform:uppercase;background:rgba(255,255,255,.5)}
+    .bars{display:grid;gap:18px}.bar strong{display:block;margin-bottom:8px}.track{height:16px;border:1px solid var(--ink);border-radius:999px;overflow:hidden;position:relative;background:rgba(255,255,255,.44)}.track::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(18,18,18,.42)}.fill{height:100%;border-radius:999px;background:var(--ink)}.ends{display:flex;justify-content:space-between;margin-top:6px;color:var(--muted);font:10px "DM Mono",monospace;text-transform:uppercase}
+    .list{display:grid;gap:12px}.list article{padding:16px 0;border-bottom:1px solid rgba(18,18,18,.14)}.list article:last-child{border-bottom:0;padding-bottom:0}.list h3{margin:0 0 8px;font-size:20px}.list p{margin:0;color:var(--muted);line-height:1.55}
+    .creator-footer{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;padding:28px 0 0;color:var(--muted);font:9px "DM Mono",monospace}.creator-footer a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}@media (max-width:900px){.hero,.grid{grid-template-columns:1fr}.stamp{width:160px;justify-self:end}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="top">
+      <a class="back" href="index.html" id="back-to-results">← voltar aos resultados</a>
+      <span class="badge">correntes políticas</span>
+    </div>
+
+    <section class="hero">
+      <div>
+        <p class="eyebrow">EXPLICAÇÃO</p>
+        <h1 id="title">Corrente política</h1>
+        <p class="summary" id="summary"></p>
+      </div>
+      <div class="stamp" id="stamp">corrente<br><strong id="stamp-name">—</strong></div>
+    </section>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-head"><span class="mono">COMO COSTUMA APARECER</span><span class="mono">7 eixos</span></div>
+        <div class="bars" id="bars"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><span class="mono">LEITURA RÁPIDA</span><span class="mono">em linguagem direta</span></div>
+        <p class="lead" id="lead"></p>
+        <div class="chips" id="chips"></div>
+      </section>
+    </div>
+
+    <div class="grid" style="margin-top:18px;grid-template-columns:.95fr 1.05fr;">
+      <section class="panel">
+        <div class="panel-head"><span class="mono">CARACTERÍSTICAS</span><span class="mono">o que costuma defender</span></div>
+        <div class="list" id="features"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><span class="mono">COMO INTERPRETAR</span><span class="mono">sem simplificações</span></div>
+        <div class="list" id="notes"></div>
+      </section>
+    </div>
+    <footer class="creator-footer">
+      <span>criado por</span>
+      <a href="https://www.linkedin.com/in/junior-saraiva" target="_blank" rel="noreferrer">Junior Saraiva</a>
+      <span>e</span>
+      <a href="https://www.linkedin.com/in/welbertorres/" target="_blank" rel="noreferrer">Welber Torres</a>
+    </footer>
+  </main>
+
+  <script>
+    const backToResults = document.getElementById('back-to-results');
+    backToResults.addEventListener('click', (event) => {
+      const cameFromSite = document.referrer && new URL(document.referrer).origin === location.origin;
+      if (cameFromSite && history.length > 1) {
+        event.preventDefault();
+        history.back();
+      }
+    });
+
+    const ideologies = {
+      'social-liberalismo': {
+        name:'Social-liberalismo',
+        desc:'Mercado com regulação, direitos individuais amplos e uma rede pública relevante.',
+        lead:'Costuma combinar economia de mercado com proteção social, valorizando liberdades individuais e políticas públicas que reduzam desigualdades sem rejeitar a iniciativa privada.',
+        chips:['mercado com regulação','direitos civis','estado social','pluralismo'],
+        v:{economy:56,social:78,liberty:66,equality:64},
+        bars:[['Economia',56,'+ Estado','+ Mercado'],['Costumes',78,'Conservador','Progressista'],['Liberdades',66,'+ Autoridade','+ Liberdade'],['Igualdade',64,'+ Mérito','+ Proteção']],
+        features:[['Economia mista','Aceita mercado e concorrência, mas entende que o Estado precisa regular e garantir serviços essenciais.'],['Direitos individuais','Tende a defender liberdade de expressão, autonomia pessoal e direitos de minorias.'],['Proteção social','Vê valor em políticas públicas que ampliem oportunidades e reduzam desvantagens de origem.']],
+        notes:[['Não é “esquerda radical”','Pode apoiar privatizações e responsabilidade fiscal em algumas áreas.'],['Também não é laissez-faire','Não costuma defender Estado mínimo nem abandono de redes públicas.'],['É uma corrente híbrida','O foco está em equilibrar eficiência econômica com liberdade e inclusão.']]
+      },
+      'liberalismo-classico': {
+        name:'Liberalismo clássico', desc:'Livre mercado, Estado limitado e forte proteção às liberdades individuais.', lead:'Dá mais peso à autonomia individual, à livre iniciativa e a um Estado menor, mantendo forte defesa de direitos civis e limites ao poder público.', chips:['livre mercado','estado limitado','direitos individuais','autonomia'], v:{economy:80,social:65,liberty:83,equality:35}, bars:[['Economia',80,'+ Estado','+ Mercado'],['Costumes',65,'Conservador','Progressista'],['Liberdades',83,'+ Autoridade','+ Liberdade'],['Igualdade',35,'+ Mérito','+ Proteção']], features:[['Mercado forte','Vê concorrência, propriedade privada e contratos como pilares centrais.'],['Liberdade civil','Costuma desconfiar de censura, vigilância e intervenção excessiva do Estado.'],['Responsabilidade individual','Dá mais peso a mérito, escolha e autonomia do que a redistribuição.']], notes:[['Não se confunde com conservadorismo','Pode ser liberal nos costumes e bem permissivo em escolhas pessoais.'],['Nem todo liberal clássico é libertário','Há aceitação maior de algumas funções do Estado do que no libertarianismo.'],['A intensidade varia','Algumas vertentes aceitam mais regulação; outras, quase nenhuma.']]
+      },
+      'social-democracia': {
+        name:'Social-democracia', desc:'Economia de mercado combinada a serviços públicos e redistribuição robustos.', lead:'Busca conciliar democracia liberal e economia de mercado com forte presença do Estado em bem-estar social, proteção trabalhista e redução da desigualdade.', chips:['bem-estar social','serviços públicos','regulação','redução da desigualdade'], v:{economy:34,social:76,liberty:62,equality:82}, bars:[['Economia',34,'+ Estado','+ Mercado'],['Costumes',76,'Conservador','Progressista'],['Liberdades',62,'+ Autoridade','+ Liberdade'],['Igualdade',82,'+ Mérito','+ Proteção']], features:[['Rede pública robusta','Defende saúde, educação e proteção social amplas.'],['Mercado regulado','Não rejeita economia de mercado, mas quer regras e redistribuição.'],['Inclusão social','Vê desigualdade como problema central da vida política.']], notes:[['Não é socialismo de Estado','Mercado e propriedade privada continuam existindo.'],['Foco pragmático','Costuma preferir reformas graduais a rupturas abruptas.'],['Liberdades importam','Normalmente convive com instituições democráticas e direitos civis.']]
+      },
+      'progressismo-de-esquerda': {
+        name:'Progressismo de esquerda', desc:'Mudança social ampla, direitos civis e forte preocupação com desigualdade estrutural.', lead:'Coloca grande ênfase em transformação social, combate a desigualdades históricas e ampliação de direitos, normalmente defendendo presença estatal mais forte.', chips:['mudança social','direitos civis','redistribuição','inclusão'], v:{economy:24,social:90,liberty:70,equality:88}, bars:[['Economia',24,'+ Estado','+ Mercado'],['Costumes',90,'Conservador','Progressista'],['Liberdades',70,'+ Autoridade','+ Liberdade'],['Igualdade',88,'+ Mérito','+ Proteção']], features:[['Direitos e reconhecimento','Valoriza pautas de identidade, diversidade e reparação de desigualdades.'],['Estado ativo','Aceita maior intervenção para corrigir exclusões estruturais.'],['Transformação cultural','Costuma apoiar mudanças mais rápidas em normas sociais.']], notes:[['Não é um bloco único','Há nuances entre vertentes mais institucionais e mais radicais.'],['Economia e cultura andam juntas','Questões materiais e simbólicas costumam ser lidas como conectadas.'],['Pode divergir sobre liberdade de expressão','Algumas correntes aceitam mais restrições do que outras.']]
+      },
+      'libertarianismo': {
+        name:'Libertarianismo', desc:'Máxima liberdade econômica e pessoal, com Estado bastante reduzido.', lead:'Leva a autonomia individual ao máximo tanto na economia quanto na vida privada, defendendo Estado mínimo e forte objeção à coerção estatal.', chips:['estado mínimo','autonomia pessoal','mercado livre','anti-coerção'], v:{economy:90,social:82,liberty:96,equality:20}, bars:[['Economia',90,'+ Estado','+ Mercado'],['Costumes',82,'Conservador','Progressista'],['Liberdades',96,'+ Autoridade','+ Liberdade'],['Igualdade',20,'+ Mérito','+ Proteção']], features:[['Quase nenhuma intervenção','Defende tributação menor, desregulação e ampla liberdade de escolha.'],['Liberdades radicais','É contra vigilância e interferência estatal em comportamentos pessoais.'],['Primazia do indivíduo','Desconfia de políticas redistributivas compulsórias.']], notes:[['É mais radical que liberalismo clássico','Aceita menos Estado em quase todas as frentes.'],['Pode divergir sobre fronteiras práticas','Nem todos concordam sobre polícia, justiça ou bens públicos.'],['Combinações são possíveis','Há libertários mais progressistas ou mais conservadores em estilo cultural.']]
+      },
+      'liberal-conservadorismo': {
+        name:'Liberal-conservadorismo', desc:'Mercado forte, responsabilidade individual e maior apego a normas sociais tradicionais.', lead:'Combina defesa da economia de mercado e do mérito com maior cautela em mudanças de costumes e valorização de ordem social.', chips:['mercado forte','ordem social','responsabilidade individual','valores tradicionais'], v:{economy:76,social:38,liberty:60,equality:34}, bars:[['Economia',76,'+ Estado','+ Mercado'],['Costumes',38,'Conservador','Progressista'],['Liberdades',60,'+ Autoridade','+ Liberdade'],['Igualdade',34,'+ Mérito','+ Proteção']], features:[['Economia pró-mercado','Vê iniciativa privada e concorrência como motores centrais.'],['Mudança gradual','Prefere cautela em transformações morais e institucionais.'],['Ênfase no mérito','Costuma valorizar autonomia e responsabilidade individual.']], notes:[['Não é idêntico ao conservadorismo puro','Pode aceitar mais liberdades civis e menos moralismo estatal.'],['Também não é liberal puro','A dimensão cultural pesa mais do que no liberalismo clássico.'],['Há muitas versões','Em alguns contextos, pode se aproximar bastante da centro-direita tradicional.']]
+      },
+      'conservadorismo': {
+        name:'Conservadorismo', desc:'Ordem, tradição, responsabilidade individual e mudanças sociais mais graduais.', lead:'Valoriza estabilidade, instituições, tradição e prudência diante de mudanças rápidas, podendo variar bastante na agenda econômica.', chips:['tradição','ordem','prudência','mudança gradual'], v:{economy:62,social:22,liberty:38,equality:35}, bars:[['Economia',62,'+ Estado','+ Mercado'],['Costumes',22,'Conservador','Progressista'],['Liberdades',38,'+ Autoridade','+ Liberdade'],['Igualdade',35,'+ Mérito','+ Proteção']], features:[['Mudança com cautela','Desconfia de reformas bruscas em costumes e instituições.'],['Valoriza coesão social','Entende normas e tradições como parte da estabilidade coletiva.'],['Autoridade mais aceita','Pode aceitar maior peso da ordem e da disciplina.']], notes:[['Economia não define tudo','Existem conservadores mais estatistas e outros mais liberais.'],['Nem todo conservador é autoritário','A intensidade varia muito conforme o contexto.'],['A noção de tradição muda','O que é “tradicional” depende de época e país.']]
+      },
+      'comunitarismo': {
+        name:'Comunitarismo', desc:'Coesão social, proteção coletiva e maior disposição para intervenção estatal.', lead:'Dá mais peso ao vínculo social, à responsabilidade coletiva e à ideia de que a comunidade também deve orientar escolhas políticas.', chips:['coesão social','proteção coletiva','comunidade','intervenção estatal'], v:{economy:38,social:45,liberty:28,equality:74}, bars:[['Economia',38,'+ Estado','+ Mercado'],['Costumes',45,'Conservador','Progressista'],['Liberdades',28,'+ Autoridade','+ Liberdade'],['Igualdade',74,'+ Mérito','+ Proteção']], features:[['Bem comum','Enxerga a sociedade como algo maior que a soma de indivíduos.'],['Proteção social','Aceita políticas mais fortes de cuidado e coordenação coletiva.'],['Limites em nome da comunidade','Pode aceitar mais restrições se forem vistas como protetivas.']], notes:[['Difere do autoritarismo puro','A justificativa costuma ser solidariedade e não apenas controle.'],['Pode misturar valores','Às vezes combina aspectos de esquerda econômica com costumes moderados.'],['Foco relacional','O centro da análise é o vínculo social, não só o indivíduo.']]
+      }
+    };
+
+
+    const extraAxes = {
+      'social-liberalismo': [46,38,32],
+      'liberalismo-classico': [42,68,26],
+      'social-democracia': [42,32,30],
+      'progressismo-de-esquerda': [30,22,40],
+      'libertarianismo': [34,76,22],
+      'liberal-conservadorismo': [72,74,56],
+      'conservadorismo': [82,66,64],
+      'comunitarismo': [58,34,48],
+    };
+
+    const slug = new URLSearchParams(location.search).get('slug') || 'social-liberalismo';
+    const current = ideologies[slug] || ideologies['social-liberalismo'];
+    const [security, development, institutions] = extraAxes[slug] || extraAxes['social-liberalismo'];
+    current.bars = [...current.bars, ['Segurança',security,'Prevenção / garantias','Repressão / punição'], ['Desenvolvimento',development,'Preservação','Exploração econômica'], ['Instituições',institutions,'Freios e contrapesos','Força da maioria eleita']];
+    const title = document.getElementById('title');
+    const stampName = document.getElementById('stamp-name');
+    const summary = document.getElementById('summary');
+    const lead = document.getElementById('lead');
+    const chips = document.getElementById('chips');
+    const bars = document.getElementById('bars');
+    const features = document.getElementById('features');
+    const notes = document.getElementById('notes');
+
+    title.textContent = current.name;
+    stampName.textContent = current.name;
+    summary.textContent = current.desc;
+    lead.textContent = current.lead;
+    chips.innerHTML = current.chips.map(item => `<span class="chip">${item}</span>`).join('');
+    bars.innerHTML = current.bars.map(([label,value,low,high]) => `
+      <div class="bar">
+        <strong>${label}</strong>
+        <div class="track"><div class="fill" style="width:${value}%"></div></div>
+        <div class="ends"><span>${low}</span><span>${high}</span></div>
+      </div>`).join('');
+    features.innerHTML = current.features.map(([t,txt]) => `<article><h3>${t}</h3><p>${txt}</p></article>`).join('');
+    notes.innerHTML = current.notes.map(([t,txt]) => `<article><h3>${t}</h3><p>${txt}</p></article>`).join('');
+  </script>
+</body>
+</html>
